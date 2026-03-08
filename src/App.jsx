@@ -187,22 +187,25 @@ function renderLineup(lineup, teamNumber, updatePlayer) {
           <label>{position}</label>
 
           {lineup[position].pick && (
-            <div style={{
-              position: "absolute",
-              top: -6,
-              right: -6,
-              background: "#cc0000",
-              width: 20,
-              height: 20,
-              borderRadius: 4,
-              fontSize: 12,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}>
-              {lineup[position].pick}
-            </div>
-          )}
+  <div style={{
+    position: "absolute",
+    top: -8,
+    right: -8,
+    background: "#ef4444",
+    width: 22,
+    height: 22,
+    borderRadius: "50%",
+    fontSize: 12,
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+    border: "2px solid white"
+  }}>
+    {lineup[position].pick}
+  </div>
+)}
 
           <input
             value={lineup[position].player}
