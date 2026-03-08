@@ -1,169 +1,113 @@
 import { useState } from "react";
 
-const teams = [
-  "Anaheim Ducks","Utah Mammoth","Boston Bruins","Buffalo Sabres",
-  "Calgary Flames","Carolina Hurricanes","Chicago Blackhawks",
-  "Colorado Avalanche","Columbus Blue Jackets","Dallas Stars",
-  "Detroit Red Wings","Edmonton Oilers","Florida Panthers",
-  "Los Angeles Kings","Minnesota Wild","Montreal Canadiens",
-  "Nashville Predators","New Jersey Devils","New York Islanders",
-  "New York Rangers","Ottawa Senators","Philadelphia Flyers",
-  "Pittsburgh Penguins","San Jose Sharks","Seattle Kraken",
-  "St. Louis Blues","Tampa Bay Lightning","Toronto Maple Leafs",
-  "Vancouver Canucks","Vegas Golden Knights","Washington Capitals",
-  "Winnipeg Jets"
-];
+const positions = ["G", "C", "LW", "RW", "D1", "D2"];
 
-function logoURL(team) {
-  return `https://loodibee.com/wp-content/uploads/nhl-${team
-    .toLowerCase()
-    .replace(/ /g, "-")
-    .replace(".", "")
-  }-logo.png`;
-}
-
-function createEmptyLineup() {
-  return {
-    C: { player: "", pick: null },
-    LW: { player: "", pick: null },
-    RW: { player: "", pick: null },
-    D1: { player: "", pick: null },
-    D2: { player: "", pick: null },
-    G: { player: "", pick: null }
-  };
-}
-
-export default function App() {
-
-  const [team1, setTeam1] = useState(null);
-  const [team2, setTeam2] = useState(null);
-
-  const [lineup1, setLineup1] = useState(createEmptyLineup());
-  const [lineup2, setLineup2] = useState(createEmptyLineup());
+export default function DraftGame() {
+  const [lineup, setLineup] = useState({
+    G: { name: "", pick: null },
+    C: { name: "", pick: null },
+    LW: { name: "", pick: null },
+    RW: { name: "", pick: null },
+    D1: { name: "", pick: null },
+    D2: { name: "", pick: null }
+  });
 
   const [pickNumber, setPickNumber] = useState(1);
 
-  function spinTeam1() {
-    const random = teams[Math.floor(Math.random() * teams.length)];
-    setTeam1(random);
-  }
+  const updatePlayer = (position, value) => {
+    setLineup((prev) => {
+      const updated = { ...prev };
 
-  function spinTeam2() {
-    const random = teams[Math.floor(Math.random() * teams.length)];
-    setTeam2(random);
-  }
+      if (value && !updated[position].pick) {
+        updated[position] = {
+          name: value,
+          pick: pickNumber
+        };
 
-  function updatePlayer(teamNumber, position, value) {
-  if (teamNumber === 1) {
-    setLineup1(prev => {
-      const current = prev[position];
-
-      let pick = current.pick;
-
-      if (!pick && value.trim() !== "") {
-        pick = pickNumber;
-        setPickNumber(p => p + 1);
+        setPickNumber((n) => n + 1);
+      } else {
+        updated[position] = {
+          ...updated[position],
+          name: value
+        };
       }
 
-      return {
-        ...prev,
-        [position]: {
-          player: value,
-          pick
-        }
-      };
+      return updated;
+    });
+  };
+
+  const resetDraft = () => {
+    setLineup({
+      G: { name: "", pick: null },
+      C: { name: "", pick: null },
+      LW: { name: "", pick: null },
+      RW: { name: "", pick: null },
+      D1: { name: "", pick: null },
+      D2: { name: "", pick: null }
     });
 
-  } else {
-
-    setLineup2(prev => {
-      const current = prev[position];
-
-      let pick = current.pick;
-
-      if (!pick && value.trim() !== "") {
-        pick = pickNumber;
-        setPickNumber(p => p + 1);
-      }
-
-      return {
-        ...prev,
-        [position]: {
-          player: value,
-          pick
-        }
-      };
-    });
-
-  }
-}
-function renderLineup(lineup, teamNumber, updatePlayer) {
+    setPickNumber(1);
+  };
 
   return (
-    <div style={{
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: 12,
-      marginTop: 20
-    }}>
+    <div style={{ padding: 30 }}>
+      <h1>Hockey Draft</h1>
 
-      {Object.keys(lineup).map(position => (
+      {positions.map((pos) => (
+        <div key={pos} style={{ marginBottom: 15 }}>
+          <strong>{pos}</strong>
 
-        <div key={position} style={{ position: "relative" }}>
+          <div style={{ position: "relative", display: "inline-block", marginLeft: 10 }}>
+            <input
+              value={lineup[pos].name}
+              placeholder="Player name"
+              onChange={(e) => updatePlayer(pos, e.target.value)}
+              style={{
+                padding: "8px 10px",
+                borderRadius: 6,
+                border: "1px solid #ccc"
+              }}
+            />
 
-          <label>{position}</label>
-
-          {lineup[position].pick && (
-            <div style={{
-              position: "absolute",
-              top: -8,
-              right: -8,
-              background: "#ef4444",
-              width: 22,
-              height: 22,
-              borderRadius: "50%",
-              fontSize: 12,
-              fontWeight: "bold",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
-              border: "2px solid white"
-            }}>
-              {lineup[position].pick}
-            </div>
-          )}
-
-          <input
-            value={lineup[position].player}
-            onChange={(e) =>
-              updatePlayer(teamNumber, position, e.target.value)
-            }
-            placeholder="Enter player"
-            style={{
-              width: "100%",
-              padding: 8,
-              marginTop: 4,
-              borderRadius: 6,
-              border: "none"
-            }}
-          />
-
+            {lineup[pos].pick && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: -8,
+                  right: -8,
+                  width: 22,
+                  height: 22,
+                  borderRadius: "50%",
+                  background: "red",
+                  color: "white",
+                  fontSize: 12,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "bold"
+                }}
+              >
+                {lineup[pos].pick}
+              </div>
+            )}
+          </div>
         </div>
-
       ))}
 
+      <button
+        onClick={resetDraft}
+        style={{
+          marginTop: 20,
+          padding: "10px 16px",
+          borderRadius: 8,
+          border: "none",
+          background: "black",
+          color: "white",
+          cursor: "pointer"
+        }}
+      >
+        Reset Draft
+      </button>
     </div>
   );
 }
-
-const buttonStyle = {
-  padding: "12px 24px",
-  fontSize: 16,
-  background: "#cc0000",
-  color: "white",
-  border: "none",
-  borderRadius: 8,
-  cursor: "pointer",
-  marginBottom: 20
-};
