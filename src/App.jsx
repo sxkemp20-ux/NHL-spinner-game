@@ -60,7 +60,7 @@ export default function App() {
             ...prev,
             [position]: { player: value, pick: pickNumber }
           };
-          setPickNumber(pickNumber + 1);
+          setPickNumber(prev => prev + 1);
           return updated;
         }
 
@@ -79,7 +79,7 @@ export default function App() {
             ...prev,
             [position]: { player: value, pick: pickNumber }
           };
-          setPickNumber(pickNumber + 1);
+          setPickNumber(prev => prev + 1);
           return updated;
         }
 
