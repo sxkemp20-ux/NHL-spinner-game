@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const teams = [
   "Anaheim Ducks","Utah Mammoth","Boston Bruins","Buffalo Sabres",
@@ -36,6 +36,7 @@ export default function App() {
   const [team2, setTeam2] = useState(null);
   const [lineup1, setLineup1] = useState(emptyLineup);
   const [lineup2, setLineup2] = useState(emptyLineup);
+  const pickCounter = useRef(1); // ← always current, no stale closure
 
   function spinTeam1() {
     setTeam1(teams[Math.floor(Math.random() * teams.length)]);
@@ -43,13 +44,6 @@ export default function App() {
 
   function spinTeam2() {
     setTeam2(teams[Math.floor(Math.random() * teams.length)]);
-  }
-
-  // Derive global pick count from both lineups combined
-  function getNextPick() {
-    const total = [...Object.values(lineup1), ...Object.values(lineup2)]
-      .filter(slot => slot.pick !== null).length;
-    return total + 1;
   }
 
   function handleChange(teamNumber, position, value) {
@@ -67,9 +61,11 @@ export default function App() {
 
     if (!slot.player || slot.pick !== null) return;
 
+    const thisPick = pickCounter.current++;  // ← always accurate
+
     setter(prev => ({
       ...prev,
-      [position]: { ...prev[position], pick: getNextPick() }
+      [position]: { ...prev[position], pick: thisPick }
     }));
   }
 
@@ -122,7 +118,6 @@ function renderLineup(lineup, teamNumber, handleChange, handleBlur) {
       {Object.keys(lineup).map(position => (
         <div key={position}>
           <label>{position}</label>
-          {/* Wrapper is relative so badge sits on the input, not the label */}
           <div style={{ position: "relative", marginTop: 4 }}>
             {lineup[position].pick && (
               <div style={{
@@ -140,7 +135,8 @@ function renderLineup(lineup, teamNumber, handleChange, handleBlur) {
                 justifyContent: "center",
                 boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
                 border: "2px solid white",
-                zIndex: 1
+                zIndex: 1,
+                color: "white"
               }}>
                 {lineup[position].pick}
               </div>
