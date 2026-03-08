@@ -23,12 +23,12 @@ function logoURL(team) {
 }
 
 const emptyLineup = {
-  C: "",
-  LW: "",
-  RW: "",
-  D1: "",
-  D2: "",
-  G: ""
+  C: { player: "", pick: null },
+  LW: { player: "", pick: null },
+  RW: { player: "", pick: null },
+  D1: { player: "", pick: null },
+  D2: { player: "", pick: null },
+  G: { player: "", pick: null }
 };
 
 export default function App() {
@@ -37,6 +37,8 @@ export default function App() {
 
   const [lineup1, setLineup1] = useState(emptyLineup);
   const [lineup2, setLineup2] = useState(emptyLineup);
+
+  const [pickNumber, setPickNumber] = useState(1);
 
   function spinTeam1() {
     const random = teams[Math.floor(Math.random() * teams.length)];
@@ -50,9 +52,42 @@ export default function App() {
 
   function updatePlayer(teamNumber, position, value) {
     if (teamNumber === 1) {
-      setLineup1(prev => ({ ...prev, [position]: value }));
+      setLineup1(prev => {
+        const current = prev[position];
+
+        if (!current.player && value) {
+          const updated = {
+            ...prev,
+            [position]: { player: value, pick: pickNumber }
+          };
+          setPickNumber(pickNumber + 1);
+          return updated;
+        }
+
+        return {
+          ...prev,
+          [position]: { ...current, player: value }
+        };
+      });
+
     } else {
-      setLineup2(prev => ({ ...prev, [position]: value }));
+      setLineup2(prev => {
+        const current = prev[position];
+
+        if (!current.player && value) {
+          const updated = {
+            ...prev,
+            [position]: { player: value, pick: pickNumber }
+          };
+          setPickNumber(pickNumber + 1);
+          return updated;
+        }
+
+        return {
+          ...prev,
+          [position]: { ...current, player: value }
+        };
+      });
     }
   }
 
@@ -148,10 +183,29 @@ function renderLineup(lineup, teamNumber, updatePlayer) {
       marginTop: 20
     }}>
       {Object.keys(lineup).map(position => (
-        <div key={position}>
+        <div key={position} style={{ position: "relative" }}>
           <label>{position}</label>
+
+          {lineup[position].pick && (
+            <div style={{
+              position: "absolute",
+              top: -6,
+              right: -6,
+              background: "#cc0000",
+              width: 20,
+              height: 20,
+              borderRadius: 4,
+              fontSize: 12,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
+              {lineup[position].pick}
+            </div>
+          )}
+
           <input
-            value={lineup[position]}
+            value={lineup[position].player}
             onChange={(e) =>
               updatePlayer(teamNumber, position, e.target.value)
             }
