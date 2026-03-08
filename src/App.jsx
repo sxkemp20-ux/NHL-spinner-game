@@ -16,10 +16,7 @@ const teams = [
 
 function logoURL(team) {
   return `https://loodibee.com/wp-content/uploads/nhl-${team
-    .toLowerCase()
-    .replace(/ /g, "-")
-    .replace(".", "")
-  }-logo.png`;
+    .toLowerCase().replace(/ /g, "-").replace(".", "")}-logo.png`;
 }
 
 const emptyLineup = {
@@ -31,12 +28,63 @@ const emptyLineup = {
   G: { player: "", pick: null }
 };
 
+function Lineup({ lineup, teamNumber, onPlayerChange, onPlayerBlur }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 20 }}>
+      {Object.keys(lineup).map(position => (
+        <div key={position}>
+          <label style={{ color: "#94a3b8", fontSize: 13 }}>{position}</label>
+          <div style={{ position: "relative", marginTop: 4 }}>
+            {lineup[position].pick !== null && (
+              <div style={{
+                position: "absolute",
+                top: -8,
+                right: -8,
+                background: "#ef4444",
+                width: 22,
+                height: 22,
+                borderRadius: "50%",
+                fontSize: 12,
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+                border: "2px solid white",
+                zIndex: 1,
+                color: "white"
+              }}>
+                {lineup[position].pick}
+              </div>
+            )}
+            <input
+              value={lineup[position].player}
+              onChange={(e) => onPlayerChange(teamNumber, position, e.target.value)}
+              onBlur={() => onPlayerBlur(teamNumber, position)}
+              placeholder="Enter player"
+              style={{
+                width: "100%",
+                padding: 8,
+                borderRadius: 6,
+                border: "none",
+                boxSizing: "border-box",
+                background: "#0f172a",
+                color: "white"
+              }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function App() {
   const [team1, setTeam1] = useState(null);
   const [team2, setTeam2] = useState(null);
   const [lineup1, setLineup1] = useState(emptyLineup);
   const [lineup2, setLineup2] = useState(emptyLineup);
-  const pickCounter = useRef(1); // ← always current, no stale closure
+  const pickCounter = useRef(1);
 
   function spinTeam1() {
     setTeam1(teams[Math.floor(Math.random() * teams.length)]);
@@ -61,7 +109,7 @@ export default function App() {
 
     if (!slot.player || slot.pick !== null) return;
 
-    const thisPick = pickCounter.current++;  // ← always accurate
+    const thisPick = pickCounter.current++;
 
     setter(prev => ({
       ...prev,
@@ -83,74 +131,29 @@ export default function App() {
 
       <div style={{ display: "flex", gap: 40, width: "100%" }}>
 
-        {/* TEAM 1 */}
         <div style={{ flex: 1, background: "#1e293b", padding: 30, borderRadius: 16 }}>
           <button onClick={spinTeam1} style={buttonStyle}>Spin Team 1</button>
           {team1 && (
             <>
               <h2 style={{ textAlign: "center" }}>{team1}</h2>
               <img src={logoURL(team1)} alt={team1} style={{ width: 120, display: "block", margin: "10px auto" }} />
-              {renderLineup(lineup1, 1, handleChange, handleBlur)}
+              <Lineup lineup={lineup1} teamNumber={1} onPlayerChange={handleChange} onPlayerBlur={handleBlur} />
             </>
           )}
         </div>
 
-        {/* TEAM 2 */}
         <div style={{ flex: 1, background: "#1e293b", padding: 30, borderRadius: 16 }}>
           <button onClick={spinTeam2} style={buttonStyle}>Spin Team 2</button>
           {team2 && (
             <>
               <h2 style={{ textAlign: "center" }}>{team2}</h2>
               <img src={logoURL(team2)} alt={team2} style={{ width: 120, display: "block", margin: "10px auto" }} />
-              {renderLineup(lineup2, 2, handleChange, handleBlur)}
+              <Lineup lineup={lineup2} teamNumber={2} onPlayerChange={handleChange} onPlayerBlur={handleBlur} />
             </>
           )}
         </div>
 
       </div>
-    </div>
-  );
-}
-
-function renderLineup(lineup, teamNumber, handleChange, handleBlur) {
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 20 }}>
-      {Object.keys(lineup).map(position => (
-        <div key={position}>
-          <label>{position}</label>
-          <div style={{ position: "relative", marginTop: 4 }}>
-            {lineup[position].pick && (
-              <div style={{
-                position: "absolute",
-                top: -8,
-                right: -8,
-                background: "#ef4444",
-                width: 22,
-                height: 22,
-                borderRadius: "50%",
-                fontSize: 12,
-                fontWeight: "bold",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
-                border: "2px solid white",
-                zIndex: 1,
-                color: "white"
-              }}>
-                {lineup[position].pick}
-              </div>
-            )}
-            <input
-              value={lineup[position].player}
-              onChange={(e) => handleChange(teamNumber, position, e.target.value)}
-              onBlur={() => handleBlur(teamNumber, position)}
-              placeholder="Enter player"
-              style={{ width: "100%", padding: 8, borderRadius: 6, border: "none", boxSizing: "border-box" }}
-            />
-          </div>
-        </div>
-      ))}
     </div>
   );
 }
