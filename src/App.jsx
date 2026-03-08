@@ -217,7 +217,7 @@ function renderLineup(lineup, teamNumber, updatePlayer) {
 
           <label>{position}</label>
 
-          {lineup[position].pick !== null && (
+          {lineup[position].pick && (
             <div style={{
               position: "absolute",
               top: -8,
