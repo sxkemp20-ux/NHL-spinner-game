@@ -35,9 +35,8 @@ export default function App() {
   const [team1, setTeam1] = useState(null);
   const [team2, setTeam2] = useState(null);
 
-  const [lineup1, setLineup1] = useState(emptyLineup);
-  const [lineup2, setLineup2] = useState(emptyLineup);
-
+  const [lineup1, setLineup1] = useState(() => ({ ...emptyLineup }));
+const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
   const [pickNumber, setPickNumber] = useState(1);
 
   function spinTeam1() {
@@ -57,9 +56,9 @@ export default function App() {
 
         if (!current.player && value) {
           const updated = {
-            ...prev,
-            [position]: { player: value, pick: pickNumber }
-          };
+  ...prev,
+  [position]: { player: value, pick: prev[position].pick ?? pickNumber }
+};
           setPickNumber(prev => prev + 1);
           return updated;
         }
