@@ -34,7 +34,6 @@ function Lineup({ lineup, teamNumber, onPlayerChange, onPlayerBlur }) {
       {Object.keys(lineup).map(position => (
         <div key={position}>
           <label style={{ color: "#94a3b8", fontSize: 13 }}>{position}</label>
-          {/* ✅ overflow visible so badge isn't clipped, position relative to anchor badge */}
           <div style={{ position: "relative", marginTop: 4, overflow: "visible" }}>
             <input
               value={lineup[position].player}
@@ -49,11 +48,10 @@ function Lineup({ lineup, teamNumber, onPlayerChange, onPlayerBlur }) {
                 boxSizing: "border-box",
                 background: "#0f172a",
                 color: "white",
-                position: "relative",  // ✅ so z-index applies to input too
-                zIndex: 1              // ✅ input sits at z:1
+                position: "relative",
+                zIndex: 1
               }}
             />
-            {/* ✅ badge rendered AFTER input in DOM, z:10 so it paints on top */}
             {lineup[position].pick !== null && (
               <div style={{
                 position: "absolute",
@@ -70,9 +68,9 @@ function Lineup({ lineup, teamNumber, onPlayerChange, onPlayerBlur }) {
                 justifyContent: "center",
                 boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
                 border: "2px solid white",
-                zIndex: 10,            // ✅ well above the input
+                zIndex: 10,
                 color: "white",
-                pointerEvents: "none"  // ✅ clicks pass through to input
+                pointerEvents: "none"
               }}>
                 {lineup[position].pick}
               </div>
