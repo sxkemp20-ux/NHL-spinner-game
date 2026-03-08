@@ -9,27 +9,18 @@ export default function DraftGame() {
     LW: { name: "", pick: null },
     RW: { name: "", pick: null },
     D1: { name: "", pick: null },
-    D2: { name: "", pick: null }
+    D2: { name: "", pick: null },
   });
-
-  const [pickNumber, setPickNumber] = useState(1);
 
   const updatePlayer = (position, value) => {
     setLineup((prev) => {
       const updated = { ...prev };
 
       if (value && !updated[position].pick) {
-        updated[position] = {
-          name: value,
-          pick: pickNumber
-        };
-
-        setPickNumber((n) => n + 1);
+        const nextPick = Object.values(prev).filter((p) => p.pick !== null).length + 1;
+        updated[position] = { name: value, pick: nextPick };
       } else {
-        updated[position] = {
-          ...updated[position],
-          name: value
-        };
+        updated[position] = { ...updated[position], name: value };
       }
 
       return updated;
@@ -43,32 +34,23 @@ export default function DraftGame() {
       LW: { name: "", pick: null },
       RW: { name: "", pick: null },
       D1: { name: "", pick: null },
-      D2: { name: "", pick: null }
+      D2: { name: "", pick: null },
     });
-
-    setPickNumber(1);
   };
 
   return (
     <div style={{ padding: 30 }}>
       <h1>Hockey Draft</h1>
-
       {positions.map((pos) => (
         <div key={pos} style={{ marginBottom: 15 }}>
           <strong>{pos}</strong>
-
           <div style={{ position: "relative", display: "inline-block", marginLeft: 10 }}>
             <input
               value={lineup[pos].name}
               placeholder="Player name"
               onChange={(e) => updatePlayer(pos, e.target.value)}
-              style={{
-                padding: "8px 10px",
-                borderRadius: 6,
-                border: "1px solid #ccc"
-              }}
+              style={{ padding: "8px 10px", borderRadius: 6, border: "1px solid #ccc" }}
             />
-
             {lineup[pos].pick && (
               <div
                 style={{
@@ -84,7 +66,7 @@ export default function DraftGame() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
                 }}
               >
                 {lineup[pos].pick}
@@ -93,7 +75,6 @@ export default function DraftGame() {
           </div>
         </div>
       ))}
-
       <button
         onClick={resetDraft}
         style={{
@@ -103,7 +84,7 @@ export default function DraftGame() {
           border: "none",
           background: "black",
           color: "white",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Reset Draft
