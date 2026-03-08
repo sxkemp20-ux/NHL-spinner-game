@@ -54,153 +54,49 @@ export default function App() {
   }
 
   function updatePlayer(teamNumber, position, value) {
+  if (teamNumber === 1) {
+    setLineup1(prev => {
+      const current = prev[position];
 
-    if (teamNumber === 1) {
+      let pick = current.pick;
 
-      setLineup1(prev => {
+      if (!pick && value.trim() !== "") {
+        pick = pickNumber;
+        setPickNumber(p => p + 1);
+      }
 
-        const current = prev[position];
-
-        if (!current.player && value) {
-
-          const pick = pickNumber;
-          setPickNumber(p => p + 1);
-
-          return {
-            ...prev,
-            [position]: { player: value, pick }
-          };
+      return {
+        ...prev,
+        [position]: {
+          player: value,
+          pick
         }
+      };
+    });
 
-        return {
-          ...prev,
-          [position]: { ...current, player: value }
-        };
+  } else {
 
-      });
+    setLineup2(prev => {
+      const current = prev[position];
 
-    } else {
+      let pick = current.pick;
 
-      setLineup2(prev => {
+      if (!pick && value.trim() !== "") {
+        pick = pickNumber;
+        setPickNumber(p => p + 1);
+      }
 
-        const current = prev[position];
-
-        if (!current.player && value) {
-
-          const pick = pickNumber;
-          setPickNumber(p => p + 1);
-
-          return {
-            ...prev,
-            [position]: { player: value, pick }
-          };
+      return {
+        ...prev,
+        [position]: {
+          player: value,
+          pick
         }
+      };
+    });
 
-        return {
-          ...prev,
-          [position]: { ...current, player: value }
-        };
-
-      });
-
-    }
   }
-
-  return (
-    <div style={{
-      fontFamily: "Arial",
-      background: "#0f172a",
-      minHeight: "100vh",
-      width: "100vw",
-      padding: 40,
-      color: "white",
-      boxSizing: "border-box"
-    }}>
-
-      <h1 style={{ fontSize: 42, marginBottom: 30 }}>
-        🏒 NHL Spinner Game
-      </h1>
-
-      <div style={{
-        display: "flex",
-        gap: 40,
-        width: "100%"
-      }}>
-
-        {/* TEAM 1 */}
-
-        <div style={{
-          flex: 1,
-          background: "#1e293b",
-          padding: 30,
-          borderRadius: 16
-        }}>
-
-          <button onClick={spinTeam1} style={buttonStyle}>
-            Spin Team 1
-          </button>
-
-          {team1 && (
-            <>
-              <h2 style={{ textAlign: "center" }}>{team1}</h2>
-
-              <img
-                src={logoURL(team1)}
-                alt={team1}
-                style={{
-                  width: 120,
-                  display: "block",
-                  margin: "10px auto"
-                }}
-              />
-
-              {renderLineup(lineup1, 1, updatePlayer)}
-
-            </>
-          )}
-
-        </div>
-
-        {/* TEAM 2 */}
-
-        <div style={{
-          flex: 1,
-          background: "#1e293b",
-          padding: 30,
-          borderRadius: 16
-        }}>
-
-          <button onClick={spinTeam2} style={buttonStyle}>
-            Spin Team 2
-          </button>
-
-          {team2 && (
-            <>
-              <h2 style={{ textAlign: "center" }}>{team2}</h2>
-
-              <img
-                src={logoURL(team2)}
-                alt={team2}
-                style={{
-                  width: 120,
-                  display: "block",
-                  margin: "10px auto"
-                }}
-              />
-
-              {renderLineup(lineup2, 2, updatePlayer)}
-
-            </>
-          )}
-
-        </div>
-
-      </div>
-
-    </div>
-  );
 }
-
 function renderLineup(lineup, teamNumber, updatePlayer) {
 
   return (
