@@ -22,21 +22,25 @@ function logoURL(team) {
   }-logo.png`;
 }
 
-const emptyLineup = {
-  C: { player: "", pick: null },
-  LW: { player: "", pick: null },
-  RW: { player: "", pick: null },
-  D1: { player: "", pick: null },
-  D2: { player: "", pick: null },
-  G: { player: "", pick: null }
-};
+function createEmptyLineup() {
+  return {
+    C: { player: "", pick: null },
+    LW: { player: "", pick: null },
+    RW: { player: "", pick: null },
+    D1: { player: "", pick: null },
+    D2: { player: "", pick: null },
+    G: { player: "", pick: null }
+  };
+}
 
 export default function App() {
+
   const [team1, setTeam1] = useState(null);
   const [team2, setTeam2] = useState(null);
 
-  const [lineup1, setLineup1] = useState(() => ({ ...emptyLineup }));
-const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
+  const [lineup1, setLineup1] = useState(createEmptyLineup());
+  const [lineup2, setLineup2] = useState(createEmptyLineup());
+
   const [pickNumber, setPickNumber] = useState(1);
 
   function spinTeam1() {
@@ -50,43 +54,55 @@ const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
   }
 
   function updatePlayer(teamNumber, position, value) {
+
     if (teamNumber === 1) {
+
       setLineup1(prev => {
+
         const current = prev[position];
 
         if (!current.player && value) {
-          const updated = {
-  ...prev,
-  [position]: { player: value, pick: prev[position].pick ?? pickNumber }
-};
-          setPickNumber(prev => prev + 1);
-          return updated;
+
+          const pick = pickNumber;
+          setPickNumber(p => p + 1);
+
+          return {
+            ...prev,
+            [position]: { player: value, pick }
+          };
         }
 
         return {
           ...prev,
           [position]: { ...current, player: value }
         };
+
       });
 
     } else {
+
       setLineup2(prev => {
+
         const current = prev[position];
 
         if (!current.player && value) {
-          const updated = {
+
+          const pick = pickNumber;
+          setPickNumber(p => p + 1);
+
+          return {
             ...prev,
-            [position]: { player: value, pick: pickNumber }
+            [position]: { player: value, pick }
           };
-          setPickNumber(prev => prev + 1);
-          return updated;
         }
 
         return {
           ...prev,
           [position]: { ...current, player: value }
         };
+
       });
+
     }
   }
 
@@ -100,6 +116,7 @@ const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
       color: "white",
       boxSizing: "border-box"
     }}>
+
       <h1 style={{ fontSize: 42, marginBottom: 30 }}>
         🏒 NHL Spinner Game
       </h1>
@@ -111,12 +128,14 @@ const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
       }}>
 
         {/* TEAM 1 */}
+
         <div style={{
           flex: 1,
           background: "#1e293b",
           padding: 30,
           borderRadius: 16
         }}>
+
           <button onClick={spinTeam1} style={buttonStyle}>
             Spin Team 1
           </button>
@@ -124,6 +143,7 @@ const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
           {team1 && (
             <>
               <h2 style={{ textAlign: "center" }}>{team1}</h2>
+
               <img
                 src={logoURL(team1)}
                 alt={team1}
@@ -135,17 +155,21 @@ const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
               />
 
               {renderLineup(lineup1, 1, updatePlayer)}
+
             </>
           )}
+
         </div>
 
         {/* TEAM 2 */}
+
         <div style={{
           flex: 1,
           background: "#1e293b",
           padding: 30,
           borderRadius: 16
         }}>
+
           <button onClick={spinTeam2} style={buttonStyle}>
             Spin Team 2
           </button>
@@ -153,6 +177,7 @@ const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
           {team2 && (
             <>
               <h2 style={{ textAlign: "center" }}>{team2}</h2>
+
               <img
                 src={logoURL(team2)}
                 alt={team2}
@@ -164,16 +189,20 @@ const [lineup2, setLineup2] = useState(() => ({ ...emptyLineup }));
               />
 
               {renderLineup(lineup2, 2, updatePlayer)}
+
             </>
           )}
+
         </div>
 
       </div>
+
     </div>
   );
 }
 
 function renderLineup(lineup, teamNumber, updatePlayer) {
+
   return (
     <div style={{
       display: "grid",
@@ -181,30 +210,33 @@ function renderLineup(lineup, teamNumber, updatePlayer) {
       gap: 12,
       marginTop: 20
     }}>
+
       {Object.keys(lineup).map(position => (
+
         <div key={position} style={{ position: "relative" }}>
+
           <label>{position}</label>
 
-          {lineup[position].pick && (
-  <div style={{
-    position: "absolute",
-    top: -8,
-    right: -8,
-    background: "#ef4444",
-    width: 22,
-    height: 22,
-    borderRadius: "50%",
-    fontSize: 12,
-    fontWeight: "bold",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
-    border: "2px solid white"
-  }}>
-    {lineup[position].pick}
-  </div>
-)}
+          {lineup[position].pick !== null && (
+            <div style={{
+              position: "absolute",
+              top: -8,
+              right: -8,
+              background: "#ef4444",
+              width: 22,
+              height: 22,
+              borderRadius: "50%",
+              fontSize: 12,
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+              border: "2px solid white"
+            }}>
+              {lineup[position].pick}
+            </div>
+          )}
 
           <input
             value={lineup[position].player}
@@ -220,8 +252,11 @@ function renderLineup(lineup, teamNumber, updatePlayer) {
               border: "none"
             }}
           />
+
         </div>
+
       ))}
+
     </div>
   );
 }
